@@ -1,0 +1,50 @@
+<!-- EJEMPLO: BaseLayout con meta tags PWA -->
+<!-- Copia las líneas marcadas con PWA a tu BaseLayout.astro -->
+
+---
+interface Props {
+  title?: string;
+}
+
+import '../styles/global.css';
+import { Header, Footer } from '@/components/layout';
+// PWA: Descomenta cuando tengas el componente InstallPrompt
+// import { InstallPrompt } from '@/components/pwa/InstallPrompt';
+
+const { title = 'Mi Aplicación' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Plantilla base Astro + React + Tailwind CSS" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    
+    <!-- PWA Meta Tags - Agrega estas líneas -->
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Mi App" />
+    
+    <!-- Apple Touch Icons - Agrega esta línea -->
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- PWA: Manifest se genera automáticamente, pero puedes agregar esta línea si quieres -->
+    <!-- <link rel="manifest" href="/manifest.webmanifest" /> -->
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header client:load />
+    <main>
+      <slot />
+    </main>
+    <Footer client:load />
+    <!-- PWA: Descomenta cuando tengas el componente InstallPrompt -->
+    <!-- <InstallPrompt client:load /> -->
+  </body>
+</html>
+

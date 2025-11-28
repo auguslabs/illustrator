@@ -1,0 +1,46 @@
+// EJEMPLO: Reglas de Seguridad para Storage
+// Copia este contenido a Firebase Console → Storage → Reglas
+// Ajusta según las necesidades de tu aplicación
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Función helper para verificar autenticación
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Función helper para verificar tamaño de archivo (5MB máximo)
+    function isValidSize() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+    
+    // Función helper para verificar tipo de imagen
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // Carpeta de avatares - Solo el usuario puede subir su propio avatar
+    match /avatars/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && 
+                   request.auth.uid == userId && 
+                   isImage() && 
+                   isValidSize();
+    }
+    
+    // Carpeta de posts - Solo autenticados pueden subir
+    match /posts/{postId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImage() && isValidSize();
+    }
+    
+    // Regla por defecto: Solo lectura pública, escritura solo autenticados
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isValidSize();
+    }
+  }
+}
+
